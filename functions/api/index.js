@@ -1,9 +1,16 @@
 export async function onRequest(context) {
   try {
     const { DB } = context.env;
-    const { results } = await DB.prepare(`SELECT * FROM books ORDER BY id DESC`).all();
-    return Response.json(results);
+    const { results } = await DB.prepare(
+      `SELECT * FROM books ORDER BY id DESC`
+    ).all();
+    return new Response(JSON.stringify(results), {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (e) {
-    return Response.json({ error: e.message }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: e.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }
