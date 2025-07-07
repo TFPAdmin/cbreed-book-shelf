@@ -1,0 +1,11 @@
+name = "bookshelf"
+main = "api/index.js"
+compatibility_date = "2025-07-07"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "book-shelf"
+database_id = "f0159cd3-fe12-4178-95f2-5b77165b93e8"
+
+[site]
+bucket = "./public"
