@@ -1,0 +1,10 @@
+{
+  "name": "bookshelf",
+  "version": "1.0.0",
+  "description": "Bookshelf site powered by Cloudflare Workers and D1",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {},
+  "type": "module"
+}
