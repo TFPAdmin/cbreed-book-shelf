@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>C. B. Reed's Bookshelf</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef5ff;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    .book {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .book img {
+      max-width: 150px;
+      float: right;
+      margin-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>C. B. Reed's Bookshelf</h1>
+  <div id="books"></div>
+
+  <script>
+    fetch('/api/books')
+      .then(res => res.json())
+      .then(books => {
+        const container = document.getElementById('books');
+        books.forEach(book => {
+          const div = document.createElement('div');
+          div.className = 'book';
+          div.innerHTML = `
+            <h2>${book.title}</h2>
+            <h3>${book.subtitle || ''}</h3>
+            <img src="${book.cover}" alt="Cover image of ${book.title}">
+            <p>${book.excerpt}</p>
+            <p><a href="${book.wattpad}" target="_blank">Read on Wattpad</a></p>
+          `;
+          container.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>
