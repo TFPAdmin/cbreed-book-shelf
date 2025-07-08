@@ -1,31 +1,36 @@
-<script>
-  document.getElementById("loginForm").onsubmit = async (e) => {
-    e.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    // Debugging: Log the local hash that gets generated
-    const encoder = new TextEncoder();
-    const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(password));
-    const hashHex = Array.from(new Uint8Array(hashBuffer))
-      .map(b => b.toString(16).padStart(2, "0"))
-      .join("");
-    console.log("Local hash:", hashHex); // ✅ You should see this in Console
-
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-
-    const data = await res.json(); // ✅ Read the response body
-
-    if (res.ok) {
-      localStorage.setItem("loggedIn", "true");
-      window.location.href = "/admin.html";
-    } else {
-      console.warn("Login failed:", data);
-      alert("Login failed: " + (data.error || "Unknown error")); // ✅ Now shows error reason
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - C. B. Reed's Bookshelf</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef5ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-  };
-</script>
+
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom:
