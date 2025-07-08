@@ -68,4 +68,64 @@
     }
 
     .book a {
-      colo
+      color: #0077cc;
+      text-decoration: none;
+      margin-top: auto;
+      font-weight: bold;
+    }
+
+    .book a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive fallback */
+    @media (max-width: 1200px) {
+      #books {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      #books {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      #books {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bookshelf">
+    <h1>C. B. Reed's Bookshelf</h1>
+    <div id="books"></div>
+  </div>
+
+  <script>
+    fetch('/api/books')
+      .then(res => res.json())
+      .then(books => {
+        const container = document.getElementById('books');
+        books.forEach(book => {
+          const div = document.createElement('div');
+          div.className = 'book';
+          div.innerHTML = `
+            <img src="${book.cover}" alt="Cover of ${book.title}">
+            <h2>${book.title}</h2>
+            <h3>${book.subtitle || ''}</h3>
+            <p>${book.excerpt}</p>
+            <p><a href="${book.wattpad}" target="_blank">Read on Wattpad</a></p>
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        console.error('Error fetching books:', err);
+        document.getElementById('books').innerHTML = '<p>Failed to load books.</p>';
+      });
+  </script>
+</body>
+</html>
