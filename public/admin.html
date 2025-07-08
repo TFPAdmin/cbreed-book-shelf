@@ -1,1 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+</head>
+<body>
+  <h2>Add a New Book</h2>
+  <form id="bookForm">
+    <input placeholder="Title" id="title" required />
+    <input placeholder="Subtitle" id="subtitle" />
+    <input placeholder="Excerpt" id="excerpt" />
+    <input placeholder="Cover Image URL" id="cover" />
+    <input placeholder="Wattpad Link" id="wattpad" />
+    <button type="submit">Submit Book</button>
+  </form>
 
+  <script>
+    if (localStorage.getItem("loggedIn") !== "true") {
+      alert("Please log in first");
+      window.location.href = "/login.html";
+    }
+
+    document.getElementById("bookForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const payload = {
+        loggedIn: true,
+        title: document.getElementById("title").value,
+        subtitle: document.getElementById("subtitle").value,
+        excerpt: document.getElementById("excerpt").value,
+        cover: document.getElementById("cover").value,
+        wattpad: document.getElementById("wattpad").value,
+      };
+
+      const res = await fetch("/api/add-book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        alert("Book added!");
+        window.location.reload();
+      } else {
+        alert("Failed to add book.");
+      }
+    };
+  </script>
+</body>
+</html>
