@@ -8,13 +8,23 @@
       font-family: Arial, sans-serif;
       background: #eef5ff;
       padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .bookshelf {
+      background: #ddd;
+      padding: 2rem;
+      border: 2px solid #ccc;
+      border-radius: 10px;
       max-width: 1400px;
-      margin: auto;
+      width: 100%;
     }
 
     h1 {
       text-align: center;
       margin-bottom: 2rem;
+      font-size: 2rem;
     }
 
     #books {
@@ -31,6 +41,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      height: 100%;
     }
 
     .book img {
@@ -57,62 +68,4 @@
     }
 
     .book a {
-      color: #0077cc;
-      text-decoration: none;
-      margin-top: auto;
-      font-weight: bold;
-    }
-
-    .book a:hover {
-      text-decoration: underline;
-    }
-
-    /* Responsive fallback */
-    @media (max-width: 1200px) {
-      #books {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (max-width: 900px) {
-      #books {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      #books {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</head>
-<body>
-  <h1>C. B. Reed's Bookshelf</h1>
-  <div id="books"></div>
-
-  <script>
-    fetch('/api/books')
-      .then(res => res.json())
-      .then(books => {
-        const container = document.getElementById('books');
-        books.forEach(book => {
-          const div = document.createElement('div');
-          div.className = 'book';
-          div.innerHTML = `
-            <img src="${book.cover}" alt="Cover of ${book.title}">
-            <h2>${book.title}</h2>
-            <h3>${book.subtitle || ''}</h3>
-            <p>${book.excerpt}</p>
-            <p><a href="${book.wattpad}" target="_blank">Read on Wattpad</a></p>
-          `;
-          container.appendChild(div);
-        });
-      })
-      .catch(err => {
-        console.error('Error fetching books:', err);
-        document.getElementById('books').innerHTML = '<p>Failed to load books.</p>';
-      });
-  </script>
-</body>
-</html>
+      colo
