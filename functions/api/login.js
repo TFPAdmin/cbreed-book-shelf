@@ -1,5 +1,3 @@
-import bcrypt from "bcryptjs";
-
 export async function onRequest(context) {
   const body = await context.request.json();
   const { username, password } = body;
@@ -12,8 +10,16 @@ export async function onRequest(context) {
     return new Response(JSON.stringify({ error: "Invalid user" }), { status: 401 });
   }
 
-  const isValid = await bcrypt.compare(password, result.password_hash);
-  if (!isValid) {
+  // Hash incoming password to compare
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(password)
+  );
+  const hashHex = Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+
+  if (hashHex !== result.password_hash) {
     return new Response(JSON.stringify({ error: "Invalid password" }), { status: 401 });
   }
 
