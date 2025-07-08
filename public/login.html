@@ -70,6 +70,8 @@
       e.preventDefault();
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
+      console.log("Entered password:", JSON.stringify(password));
+
 
       // Debugging: Log the local hash that gets generated
       const encoder = new TextEncoder();
