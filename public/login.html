@@ -4,12 +4,13 @@
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
+    // Debugging: Log the local hash that gets generated
     const encoder = new TextEncoder();
     const hashBuffer = await crypto.subtle.digest("SHA-256", encoder.encode(password));
     const hashHex = Array.from(new Uint8Array(hashBuffer))
       .map(b => b.toString(16).padStart(2, "0"))
       .join("");
-    console.log("Local hash:", hashHex);
+    console.log("Local hash:", hashHex); // ✅ You should see this in Console
 
     const res = await fetch("/api/login", {
       method: "POST",
@@ -17,14 +18,14 @@
       body: JSON.stringify({ username, password }),
     });
 
-    const data = await res.json();
+    const data = await res.json(); // ✅ Read the response body
 
     if (res.ok) {
       localStorage.setItem("loggedIn", "true");
       window.location.href = "/admin.html";
     } else {
       console.warn("Login failed:", data);
-      alert("Login failed: " + (data.error || "Unknown error"));
+      alert("Login failed: " + (data.error || "Unknown error")); // ✅ Now shows error reason
     }
   };
 </script>
