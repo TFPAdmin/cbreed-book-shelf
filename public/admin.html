@@ -1,30 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Panel</title>
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef5ff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background: #003366;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      background: #ccc;
+    }
+
+    .tabs button {
+      padding: 1rem 2rem;
+      border: none;
+      background: #ccc;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .tabs button.active {
+      background: #fff;
+      border-bottom: 2px solid #003366;
+      font-weight: bold;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      background: white;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    form input, form textarea {
+      display: block;
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+
+    form button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .book-item {
+      border: 1px solid #ccc;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      background: #f9f9f9;
+    }
+
+    .book-item button {
+      float: right;
+      background: red;
+      color: white;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .logout {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #777;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h2>Add a New Book</h2>
-  <form id="bookForm">
-    <input placeholder="Title" id="title" required />
-    <input placeholder="Subtitle" id="subtitle" />
-    <input placeholder="Excerpt" id="excerpt" />
-    <input placeholder="Cover Image URL" id="cover" />
-    <input placeholder="Wattpad Link" id="wattpad" />
-    <button type="submit">Submit Book</button>
-  </form>
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('addBook')">Add Book</button>
+    <button class="tab-btn" onclick="switchTab('manageBooks')">Manage Books</button>
+    <button class="tab-btn" onclick="switchTab('addUser')">Add User</button>
+  </div>
+
+  <div id="addBook" class="tab-content active">
+    <h2>Add Book</h2>
+    <form id="bookForm">
+      <input type="text" id="title" placeholder="Title" required />
+      <input type="text" id="subtitle" placeholder="Subtitle (optional)" />
+      <textarea id="excerpt" placeholder="Excerpt" required></textarea>
+      <input type="url" id="cover" placeholder="Cover Image URL" required />
+      <input type="url" id="wattpad" placeholder="Wattpad Link" required />
+      <button type="submit">Add Book</button>
+    </form>
+  </div>
+
+  <div id="manageBooks" class="tab-content">
+    <h2>Manage Books</h2>
+    <div id="bookList">Loading books...</div>
+  </div>
+
+  <div id="addUser" class="tab-content">
+    <h2>Add User</h2>
+    <form id="userForm">
+      <input type="text" id="newUsername" placeholder="New Username" required />
+      <input type="text" id="newPassword" placeholder="New Password" required />
+      <button type="submit">Add User</button>
+    </form>
+  </div>
 
   <script>
-    if (localStorage.getItem("loggedIn") !== "true") {
-      alert("Please log in first");
-      window.location.href = "/login.html";
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+
+    function switchTab(id) {
+      tabs.forEach(btn => btn.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelector(`[onclick="switchTab('${id}')"]`).classList.add('active');
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedIn');
+      window.location.href = '/login.html';
     }
 
     document.getElementById("bookForm").onsubmit = async (e) => {
       e.preventDefault();
       const payload = {
-        loggedIn: true,
         title: document.getElementById("title").value,
         subtitle: document.getElementById("subtitle").value,
         excerpt: document.getElementById("excerpt").value,
@@ -35,16 +164,64 @@
       const res = await fetch("/api/add-book", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
 
-      if (res.ok) {
-        alert("Book added!");
-        window.location.reload();
-      } else {
-        alert("Failed to add book.");
-      }
+      alert(res.ok ? "Book added!" : "Failed to add book");
+      if (res.ok) document.getElementById("bookForm").reset();
     };
+
+    document.getElementById("userForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("newUsername").value;
+      const password = document.getElementById("newPassword").value;
+
+      const encoder = new TextEncoder();
+      const buffer = await crypto.subtle.digest("SHA-256", encoder.encode(password));
+      const hash = Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, "0")).join("");
+
+      const res = await fetch("/api/add-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password_hash: hash })
+      });
+
+      alert(res.ok ? "User added!" : "Failed to add user");
+      if (res.ok) document.getElementById("userForm").reset();
+    };
+
+    async function loadBooks() {
+      const res = await fetch("/api/books");
+      const books = await res.json();
+      const container = document.getElementById("bookList");
+      container.innerHTML = "";
+
+      books.forEach(book => {
+        const div = document.createElement("div");
+        div.className = "book-item";
+        div.innerHTML = `
+          <strong>${book.title}</strong> (${book.subtitle || "No subtitle"})
+          <button onclick="deleteBook(${book.id})">Delete</button>
+          <p>${book.excerpt}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function deleteBook(id) {
+      if (!confirm("Are you sure you want to delete this book?")) return;
+
+      const res = await fetch(`/api/delete-book?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        alert("Book deleted");
+        loadBooks();
+      } else {
+        alert("Failed to delete book");
+      }
+    }
+
+    // Auto load when tab opens
+    document.querySelector('[onclick="switchTab(\'manageBooks\')"]').addEventListener('click', loadBooks);
   </script>
 </body>
 </html>
