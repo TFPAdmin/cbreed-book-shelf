@@ -1,6 +1,8 @@
 export async function onRequest(context) {
   const username = "admin";
-  const password_hash = "$2a$10$q8/0h.7DYYW8RQnR63Iq7O4R1i4fAog14jU2KKMCu9QoCshZkV/nK"; // hash of "admin123"
+
+  // Precomputed SHA-256 hash of "admin123"
+  const password_hash = "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f";
 
   try {
     await context.env.DB.prepare(
@@ -12,4 +14,3 @@ export async function onRequest(context) {
     return new Response("Error: " + e.message, { status: 500 });
   }
 }
-
