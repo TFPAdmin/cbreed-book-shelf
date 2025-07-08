@@ -7,10 +7,12 @@ export async function onRequest(context) {
     .bind(username).first();
 
   if (!result) {
-    return new Response(JSON.stringify({ error: "Invalid user" }), { status: 401 });
+    return new Response(JSON.stringify({
+      error: "Invalid user",
+      debug: { receivedUsername: username }
+    }), { status: 401 });
   }
 
-  // Hash incoming password to compare
   const hashBuffer = await crypto.subtle.digest(
     "SHA-256",
     new TextEncoder().encode(password)
@@ -19,11 +21,23 @@ export async function onRequest(context) {
     .map(b => b.toString(16).padStart(2, "0"))
     .join("");
 
+  const response = {
+    debugUsername: username,
+    debugHash: hashHex,
+    expectedHash: result.password_hash,
+  };
+
   if (hashHex !== result.password_hash) {
-    return new Response(JSON.stringify({ error: "Invalid password" }), { status: 401 });
+    return new Response(JSON.stringify({
+      error: "Invalid password",
+      ...response
+    }), { status: 401 });
   }
 
-  return new Response(JSON.stringify({ success: true }), {
+  return new Response(JSON.stringify({
+    success: true,
+    ...response
+  }), {
     headers: { "Content-Type": "application/json" }
   });
 }
