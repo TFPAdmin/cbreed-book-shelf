@@ -1,10 +1,5 @@
 export async function onRequest(context) {
-  const auth = await context.request.json();
-  const { loggedIn, title, subtitle, excerpt, cover, wattpad } = auth;
-
-  if (!loggedIn) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-  }
+  const { title, subtitle, excerpt, cover, wattpad } = await context.request.json();
 
   try {
     await context.env.DB.prepare(`
