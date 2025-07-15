@@ -1,5 +1,4 @@
 name = "bookshelf"
-main = "api/index.js"
 compatibility_date = "2025-07-07"
 
 [[d1_databases]]
@@ -9,3 +8,7 @@ database_id = "f0159cd3-fe12-4178-95f2-5b77165b93e8"
 
 [site]
 bucket = "./public"
+
+[dev]
+# Optional: auto-detect functions locally
+functions = "./functions"
