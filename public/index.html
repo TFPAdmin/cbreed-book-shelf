@@ -2,131 +2,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>C. B. Reed's Bookshelf</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bookshelf</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #eef5ff;
-      padding: 2rem;
-      display: flex;
-      justify-content: center;
-      margin: 0;
+    :root {
+      --bg-light: #f0f0f0;
+      --bg-dark: #1a1a1a;
+      --text-light: #222;
+      --text-dark: #f9f9f9;
+      --card-light: #fff;
+      --card-dark: #2a2a2a;
+      --border-light: #ccc;
+      --border-dark: #444;
     }
 
-    .bookshelf {
-      background: #ddd;
-      padding: 2rem;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      max-width: 1400px;
-      width: 100%;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      background: none;
+    }
+
+    .mode-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: 1px solid var(--border-light);
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      color: inherit;
+    }
+
+    body.dark .mode-toggle {
+      border-color: var(--border-dark);
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 2rem;
-      font-size: 2rem;
+      font-size: 2em;
+      margin-bottom: 10px;
     }
 
-    #books {
+    .bookshelf {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .book {
-      background: white;
-      padding: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .book-card {
+      background-color: var(--card-light);
+      border: 2px dashed var(--border-light);
       border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
+      padding: 15px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+      transition: background-color 0.3s, border-color 0.3s;
     }
 
-    .book img {
-      max-width: 100%;
+    body.dark .book-card {
+      background-color: var(--card-dark);
+      border-color: var(--border-dark);
+    }
+
+    .book-card img {
+      width: 100%;
       height: auto;
-      margin-bottom: 1rem;
       border-radius: 4px;
+      margin-bottom: 10px;
     }
 
-    .book h2 {
-      font-size: 1.2rem;
-      margin: 0 0 0.5rem;
+    .book-card h2 {
+      margin: 10px 0 5px;
+      font-size: 1.2em;
     }
 
-    .book h3 {
-      font-size: 1rem;
-      color: #666;
-      margin: 0 0 0.5rem;
+    .book-card .subtitle {
+      font-style: italic;
+      color: #777;
+      font-size: 0.95em;
+      margin-bottom: 10px;
     }
 
-    .book p {
-      font-size: 0.9rem;
-      margin: 0.5rem 0;
+    body.dark .book-card .subtitle {
+      color: #aaa;
     }
 
-    .book a {
-      color: #0077cc;
+    .book-card p.excerpt {
+      font-size: 0.95em;
+      margin-bottom: 10px;
+    }
+
+    .book-card a {
+      display: inline-block;
       text-decoration: none;
-      margin-top: auto;
       font-weight: bold;
+      color: #0077cc;
     }
 
-    .book a:hover {
-      text-decoration: underline;
-    }
-
-    /* Responsive fallback */
-    @media (max-width: 1200px) {
-      #books {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (max-width: 900px) {
-      #books {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      #books {
-        grid-template-columns: 1fr;
-      }
+    body.dark .book-card a {
+      color: #66bfff;
     }
   </style>
 </head>
 <body>
-  <div class="bookshelf">
-    <h1>C. B. Reed's Bookshelf</h1>
-    <div id="books"></div>
+  <button class="mode-toggle" onclick="toggleMode()">Toggle Mode</button>
+  <header>
+    <h1>Bookshelf</h1>
+    <p>Explore my published works</p>
+  </header>
+  <div id="bookshelf" class="bookshelf">
+    <p>Loading books...</p>
   </div>
 
   <script>
-    fetch('/api/books')
-      .then(res => res.json())
-      .then(books => {
-        const container = document.getElementById('books');
-        books.forEach(book => {
-          const div = document.createElement('div');
-          div.className = 'book';
-          div.innerHTML = `
-            <img src="${book.cover}" alt="Cover of ${book.title}">
-            <h2>${book.title}</h2>
-            <h3>${book.subtitle || ''}</h3>
-            <p>${book.excerpt}</p>
-            <p><a href="${book.wattpad}" target="_blank">Read on Wattpad</a></p>
-          `;
-          container.appendChild(div);
-        });
-      })
-      .catch(err => {
-        console.error('Error fetching books:', err);
-        document.getElementById('books').innerHTML = '<p>Failed to load books.</p>';
+    async function loadBooks() {
+      const res = await fetch('/get-published-books');
+      const books = await res.json();
+      const shelf = document.getElementById('bookshelf');
+      shelf.innerHTML = '';
+
+      books.forEach(book => {
+        const card = document.createElement('div');
+        card.className = 'book-card';
+        card.innerHTML = `
+          <img src="${book.cover}" alt="${book.title}" onerror="this.style.display='none'">
+          <h2>${book.title}</h2>
+          <div class="subtitle">${book.subtitle || ''}</div>
+          <p class="excerpt">${book.excerpt || ''}</p>
+          ${book.wattpad ? `<a href="${book.wattpad}" target="_blank">Read on Wattpad</a>` : ''}
+        `;
+        shelf.appendChild(card);
       });
+    }
+
+    function toggleMode() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // Initialize theme
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+
+    loadBooks();
   </script>
 </body>
 </html>
