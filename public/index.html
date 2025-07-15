@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bookshelf</title>
+  <title>C.B. Reed's Bookshelf</title>
   <style>
     :root {
       --bg-light: #f0f0f0;
@@ -33,6 +33,7 @@
       padding: 20px;
       text-align: center;
       background: none;
+      position: relative;
     }
 
     .mode-toggle {
@@ -46,6 +47,7 @@
       cursor: pointer;
       font-size: 14px;
       color: inherit;
+      transition: border-color 0.3s;
     }
 
     body.dark .mode-toggle {
@@ -54,7 +56,7 @@
 
     h1 {
       font-size: 2em;
-      margin-bottom: 10px;
+      margin: 10px 0;
     }
 
     .bookshelf {
@@ -118,14 +120,23 @@
     body.dark .book-card a {
       color: #66bfff;
     }
+
+    @media (max-width: 600px) {
+      .mode-toggle {
+        position: static;
+        margin: 10px auto 0;
+        display: block;
+      }
+    }
   </style>
 </head>
 <body>
-  <button class="mode-toggle" onclick="toggleMode()">Toggle Dark Mode</button>
   <header>
-    <h1>Bookshelf</h1>
+    <h1>C.B. Reed's Bookshelf</h1>
     <p>Explore my published works</p>
+    <button class="mode-toggle" onclick="toggleMode()">Toggle Dark Mode</button>
   </header>
+
   <div id="bookshelf" class="bookshelf">
     <p>Loading books...</p>
   </div>
