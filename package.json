@@ -1,10 +1,9 @@
 {
   "name": "bookshelf",
   "version": "1.0.0",
-  "description": "Bookshelf site powered by Cloudflare Workers and D1",
+  "private": true,
   "scripts": {
-    "deploy": "wrangler deploy"
-  },
-  "devDependencies": {},
-  "type": "module"
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages publish ./public --project-name=bookshelf"
+  }
 }
